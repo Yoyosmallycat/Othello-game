@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+canvas {
+    border:1px solid #d3d3d3;
+    background-color: #a1cddf;
+}
+</style>
+</head>
+<body onload="startOthello()">
+<script>
+
+var t1,t2,t3;
+
+function startOthello() {
+    gameBoard.start();
+    t1 = new OnePiece(70, 70, "#a100b1", 200, 200);
+    t2 = new OnePiece(70, 70, "#00aa00", 500, 200);
+    t3 = new OnePiece(70, 70, "#000077", 200, 500);
+}
+
+var gameBoard = {
+    canvas : document.createElement("canvas"),
+    start : function() {
+        this.canvas.width = 720;
+        this.canvas.height = 720;
+        this.context = this.canvas.getContext("2d");
+        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+    }
+}
+
+function OnePiece(width, height, color, x, y) {
+    this.width = width;
+    this.height = height;
+    this.x = x;
+    this.y = y;    
+    ctx = gameBoard.context;
+    ctx.fillStyle = color;
+    ctx.fillRect(this.x, this.y, this.width, this.height);
+}
+
+</script>
+
+<p>Welcome to our game Othello!</p>
+
+</body>
+</html>

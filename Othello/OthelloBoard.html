@@ -1,49 +1,79 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<style>
-canvas {
-    border:1px solid #d3d3d3;
-    background-color: #a1cddf;
-}
-</style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        canvas {
+            border: 1px solid #d3d3d3;
+            background-color: #a1cddf;
+        }
+    </style>
 </head>
+
 <body onload="startOthello()">
-<script>
+    <script>
 
-var t1,t2,t3;
+        function startOthello() {
+            gameBoard.start();
+            //var rectangle = new OneRectangle(70, 70, "#a100b1", 200, 200);
+            //var line = new OneLine(70, 70, 200, 200, "black", 3);
+            //var line2 = new OneLine(70, 200, 200, 70, "red", 7);
+            var board = new OneBoard(100, 100, 100, 11, 11);
+            var Circle = new OneCircle(500, 300, 45, "white");
+            var Circle = new OneCircle(100, 500, 45, "black")
+        }
 
-function startOthello() {
-    gameBoard.start();
-    t1 = new OnePiece(70, 70, "#a100b1", 200, 200);
-    t2 = new OnePiece(70, 70, "#00aa00", 500, 200);
-    t3 = new OnePiece(70, 70, "#000077", 200, 500);
-}
+        var gameBoard = {
+            canvas: document.createElement("canvas"),
+            start: function () {
+                this.canvas.width = 1200;
+                this.canvas.height = 1200;
+                this.context = this.canvas.getContext("2d");
+                document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+            }
+        }
 
-var gameBoard = {
-    canvas : document.createElement("canvas"),
-    start : function() {
-        this.canvas.width = 720;
-        this.canvas.height = 720;
-        this.context = this.canvas.getContext("2d");
-        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-    }
-}
+        function OneRectangle(width, height, color, x, y) {
+            ctx = gameBoard.context;
 
-function OnePiece(width, height, color, x, y) {
-    this.width = width;
-    this.height = height;
-    this.x = x;
-    this.y = y;    
-    ctx = gameBoard.context;
-    ctx.fillStyle = color;
-    ctx.fillRect(this.x, this.y, this.width, this.height);
-}
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, width, height);
+        }
 
-</script>
+        function OneLine(startX, startY, endX, endY, color, width) {
+            ctx = gameBoard.context;
 
-<p>Welcome to our game Othello!</p>
+            ctx.beginPath();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = width;
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(endX, endY);
+            ctx.stroke();
+        }
+
+        function OneBoard(startX, startY, width, numX, numY) {
+            for (var i = 0; i < numX; i++) {
+                new OneLine(startX + i * width, startY, startX + i * width, startY + (numY - 1) * width, "black", 3);
+            }
+            for (var j = 0; j < numY; j++) {
+                new OneLine(startX, startY + j * width, startX + (numX - 1) * width, startY + j * width, "black", 3);
+            }
+        }
+
+        function OneCircle(x, y, radius, color) {
+            ctx = gameBoard.context;
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, 2 * Math.PI);
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.strokeStyle = color;
+            ctx.stroke();
+        }
+    </script>
+
+    <p>Welcome to our game Othello!</p>
 
 </body>
+
 </html>

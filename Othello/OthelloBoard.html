@@ -14,15 +14,44 @@
 <body onload="startOthello()">
     <script>
 
+        var piecesData = new Array(10);
+
         function startOthello() {
             gameBoard.start();
+
+            for (var i = 0; i < piecesData.length; i++) {
+                piecesData[i] = new Array(5);
+                for (var j = 0; j < piecesData[i].length; ++j)
+                    piecesData[i][j] = 0;
+            }
+
             //var rectangle = new OneRectangle(70, 70, "#a100b1", 200, 200);
             //var line = new OneLine(70, 70, 200, 200, "black", 3);
             //var line2 = new OneLine(70, 200, 200, 70, "red", 7);
-            var board = new OneBoard(100, 100, 100, 11, 11);
-            var Circle = new OneCircle(500, 300, 45, "white");
-            var Circle = new OneCircle(100, 500, 45, "black")
+            //var Circle = new OneCircle(500, 300, 45, "white");
+            //var Circle = new OneCircle(100, 500, 45, "black")
+
+            /* temp
+            for (var i = 1; i <= 10; ++i)
+                for (var j = 1; j <= 10; ++j)
+                    OnePiece(i, j, "white");*/
+
+            ResetBoard();
+
+            piecesData[2][2] = 1;
+            piecesData[3][3] = 2;
+            piecesData[9][3] = 2
+            piecesData[7][9] = 1
+
+            PlacePieces();
+
+            document.getElementById('ResetButton')
+                .addEventListener('click', function () {
+                    ResetBoard();
+                }, false);
         }
+
+
 
         var gameBoard = {
             canvas: document.createElement("canvas"),
@@ -61,6 +90,12 @@
             }
         }
 
+        function ResetBoard() {
+            ctx = gameBoard.context;
+            ctx.clearRect(0, 0, gameBoard.canvas.width, gameBoard.canvas.height);
+            new OneBoard(100, 100, 100, 11, 11);
+        }
+
         function OneCircle(x, y, radius, color) {
             ctx = gameBoard.context;
             ctx.beginPath();
@@ -70,9 +105,28 @@
             ctx.strokeStyle = color;
             ctx.stroke();
         }
+
+        function OnePiece(cX, cY, color) {
+            return new OneCircle(cX * 100 + 50, cY * 100 + 50, 45, color);
+        }
+
+        function PlacePieces() {
+            for (var i = 0; i < 10; ++i)
+                for (var j = 0; j < 10; ++j) {
+                    var piece = piecesData[i][j];
+
+                    if (piece == 1)
+                        OnePiece(i + 1, j + 1, "white");
+                    else if (piece == 2)
+                        OnePiece(i + 1, j + 1, "black");
+                }
+        }
+
     </script>
 
     <p>Welcome to our game Othello!</p>
+
+    <button type="button" id="ResetButton">Reset</button>
 
 </body>
 

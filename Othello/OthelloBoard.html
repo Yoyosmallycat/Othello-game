@@ -15,15 +15,10 @@
     <script>
 
         var piecesData = new Array(10);
+        var isBlack = true;
 
         function startOthello() {
             gameBoard.start();
-
-            for (var i = 0; i < piecesData.length; i++) {
-                piecesData[i] = new Array(5);
-                for (var j = 0; j < piecesData[i].length; ++j)
-                    piecesData[i][j] = 0;
-            }
 
             //var rectangle = new OneRectangle(70, 70, "#a100b1", 200, 200);
             //var line = new OneLine(70, 70, 200, 200, "black", 3);
@@ -36,22 +31,37 @@
                 for (var j = 1; j <= 10; ++j)
                     OnePiece(i, j, "white");*/
 
+            ResetData();
             ResetBoard();
+            PlacePieces();
 
-            piecesData[2][2] = 1;
+            /* piecesData[2][2] = 1;
             piecesData[3][3] = 2;
             piecesData[9][3] = 2
-            piecesData[7][9] = 1
+            piecesData[7][9] = 1 */
 
-            PlacePieces();
 
             document.getElementById('ResetButton')
                 .addEventListener('click', function () {
+                    ResetData();
                     ResetBoard();
+                    PlacePieces();
+                    isBlack = true;
                 }, false);
+
+            gameBoard.canvas.addEventListener('mousedown', function (e) {
+                var rect = gameBoard.canvas.getBoundingClientRect()
+                var x = e.clientX - rect.left;
+                var y = e.clientY - rect.top;
+                //console.log("x: " + x + " y: " + y)
+                var numX = Math.floor(x / 100);
+                var numY = Math.floor(y / 100);
+                //console.log("x: " + numX + " y: " + numY);
+                UpdateBoard(numX, numY);
+                ResetBoard();
+                PlacePieces();
+            });
         }
-
-
 
         var gameBoard = {
             canvas: document.createElement("canvas"),
@@ -90,10 +100,73 @@
             }
         }
 
+        function ResetData() {
+            for (var i = 0; i < piecesData.length; i++) {
+                piecesData[i] = new Array(10);
+                for (var j = 0; j < piecesData[i].length; ++j)
+                    piecesData[i][j] = 0;
+            }
+            piecesData[4][4] = 1;
+            piecesData[4][5] = 2;
+            piecesData[5][4] = 2;
+            piecesData[5][5] = 1;
+        }
+
         function ResetBoard() {
             ctx = gameBoard.context;
             ctx.clearRect(0, 0, gameBoard.canvas.width, gameBoard.canvas.height);
             new OneBoard(100, 100, 100, 11, 11);
+        }
+
+        function UpdateBoard(numX, numY) {
+            var xx = numX - 1;
+            var yy = numY - 1;
+            var currentColor = isBlack ? 2 : 1;
+            var oppositeColor = isBlack ? 1 : 2;
+
+            if (numX > 0 && numY > 0 && numX < 11 && numY < 11) {
+                if (piecesData[xx][yy] == 0) {
+                    // reverse necessary colors
+                    var isValid = false;
+
+                    var dirX = [-1, -1, -1, 0, 0, 1, 1, 1];
+                    var dirY = [-1, 0, 1, -1, 1, -1, 0, 1];
+
+                    for (var i = 0; i < 8; ++i) {
+                        var cX = xx;
+                        var cY = yy;
+
+                        var hasOpposite = false;
+                        var hasSame = false;
+                        for (var step = 0; step < 10; ++step) {
+                            cX += dirX[i];
+                            cY += dirY[i];
+                            if (cX < 0 || cY < 0 || cX > 9 || cY > 9) break;
+                            if (piecesData[cX][cY] == 0) break;
+                            if (piecesData[cX][cY] == oppositeColor) hasOpposite = true;
+                            if (piecesData[cX][cY] == currentColor) {
+                                hasSame = true;
+                                break;
+                            }
+                        }
+
+                        if (hasSame && hasOpposite) {
+                            isValid = true;
+                            for (var step = 0; step < 10; ++step) {
+                                cX -= dirX[i];
+                                cY -= dirY[i];
+                                if (cX == xx && cY == yy) break;
+                                piecesData[cX][cY] = currentColor;
+                            }
+                        }
+                    }
+
+                    if (isValid) {
+                        piecesData[xx][yy] = currentColor;
+                        isBlack = !isBlack;
+                    }
+                }
+            }
         }
 
         function OneCircle(x, y, radius, color) {
